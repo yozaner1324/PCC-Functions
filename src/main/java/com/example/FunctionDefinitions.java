@@ -4,12 +4,10 @@ import org.apache.geode.cache.execute.Function;
 import org.apache.geode.cache.execute.FunctionContext;
 import org.apache.geode.cache.execute.FunctionException;
 import org.apache.geode.cache.execute.RegionFunctionContext;
+import org.springframework.data.gemfire.util.SpringUtils;
 
 public class FunctionDefinitions implements Function {
 
-	public String getId() {
-		return "funid";
-	}
 
 	@Override
 	public void execute(FunctionContext functionContext) {
@@ -23,7 +21,13 @@ public class FunctionDefinitions implements Function {
 			sum += (Long)o;
 		}
 
-		regionFunctionContext.getResultSender().lastResult(sum);
+		String multiplier = SpringUtils.defaultIfEmpty("", "2");
+		int mult = Integer.parseInt(multiplier);
+		regionFunctionContext.getResultSender().lastResult(sum*mult);
+	}
+
+	public String getId() {
+		return "funid";
 	}
 
 	@Override
