@@ -1,13 +1,19 @@
-package com.example;
+package com.function;
 
+import com.contextholder.SpringContextHolder;
 import org.apache.geode.cache.execute.Function;
 import org.apache.geode.cache.execute.FunctionContext;
 import org.apache.geode.cache.execute.FunctionException;
 import org.apache.geode.cache.execute.RegionFunctionContext;
-import org.springframework.data.gemfire.util.SpringUtils;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
+@Component
 public class FunctionDefinitions implements Function {
 
+	//@Autowired
+	public Long subtract;
 
 	@Override
 	public void execute(FunctionContext functionContext) {
@@ -15,15 +21,19 @@ public class FunctionDefinitions implements Function {
 			throw new FunctionException(
 					"This is a data aware function, and has to be called on a region.");
 		}
+
+		ApplicationContext context = SpringContextHolder.getContext();
+		subtract = (Long)context.getBean("Sub");
 		Long sum = 0L;
 		RegionFunctionContext regionFunctionContext = (RegionFunctionContext) functionContext;
 		for(Object o : regionFunctionContext.getDataSet().values()) {
 			sum += (Long)o;
 		}
 
-		String multiplier = SpringUtils.defaultIfEmpty("", "2");
-		int mult = Integer.parseInt(multiplier);
-		regionFunctionContext.getResultSender().lastResult(sum*mult);
+		//int mult = Integer.parseInt(SpringUtils.defaultIfEmpty("", "2"));
+		//	sum *= mult;
+		sum -= subtract;
+		regionFunctionContext.getResultSender().lastResult(sum);
 	}
 
 	public String getId() {
@@ -43,5 +53,15 @@ public class FunctionDefinitions implements Function {
 	@Override
 	public boolean optimizeForWrite() {
 		return true;
+	}
+
+	@Bean("Sub")
+	public Long getSubtract(Long x) {
+		return 28L - x;
+	}
+
+	@Bean("x")
+	public Long getx() {
+		return 5L;
 	}
 }
