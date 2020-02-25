@@ -4,15 +4,13 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.SplittableRandom;
-
 @ComponentScan(basePackages = "com.fun*")
 @Configuration
 public class SpringContextHolder {
 
 	private static AnnotationConfigApplicationContext context;
 
-	public static AnnotationConfigApplicationContext getContext() {
+	public static synchronized AnnotationConfigApplicationContext getContext() {
 		if(context == null) {
 			context = new AnnotationConfigApplicationContext(SpringContextHolder.class) {
 				@Override
@@ -25,7 +23,7 @@ public class SpringContextHolder {
 		return context;
 	}
 
-	public static void refreshContext() {
-		context = new AnnotationConfigApplicationContext(SplittableRandom.class);
+	public synchronized static void refreshContext() {
+		context.refresh();
 	}
 }

@@ -9,7 +9,10 @@ import org.springframework.stereotype.Component;
 public class ExtraFunction implements Function {
 	@Override
 	public void execute(FunctionContext functionContext) {
-		 functionContext.getResultSender().lastResult(SpringContextHolder.getContext().getBean("Sub"));
+		//functionContext.getResultSender().lastResult(SpringContextHolder.getContext());
+		functionContext.getResultSender().sendResult(SpringContextHolder.getContext());
+
+		functionContext.getResultSender().lastResult(SpringContextHolder.getContext().getBean("Sub"));
 	}
 
 	@Override

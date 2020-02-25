@@ -5,7 +5,6 @@ import org.apache.geode.cache.execute.Function;
 import org.apache.geode.cache.execute.FunctionContext;
 import org.apache.geode.cache.execute.FunctionException;
 import org.apache.geode.cache.execute.RegionFunctionContext;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
@@ -21,9 +20,9 @@ public class FunctionDefinitions implements Function {
 			throw new FunctionException(
 					"This is a data aware function, and has to be called on a region.");
 		}
+		functionContext.getResultSender().sendResult(SpringContextHolder.getContext());
 
-		ApplicationContext context = SpringContextHolder.getContext();
-		subtract = (Long)context.getBean("Sub");
+		subtract = (Long)SpringContextHolder.getContext().getBean("Sub");
 		Long sum = 0L;
 		RegionFunctionContext regionFunctionContext = (RegionFunctionContext) functionContext;
 		for(Object o : regionFunctionContext.getDataSet().values()) {
@@ -62,6 +61,6 @@ public class FunctionDefinitions implements Function {
 
 	@Bean("x")
 	public Long getx() {
-		return 5L;
+		return 8L;
 	}
 }
