@@ -10,7 +10,8 @@ public class ExtraFunction implements Function {
 	@Override
 	public void execute(FunctionContext functionContext) {
 		//functionContext.getResultSender().lastResult(SpringContextHolder.getContext());
-		functionContext.getResultSender().sendResult(SpringContextHolder.getContext());
+//		functionContext.getResultSender().sendResult(SpringContextHolder.getContext().getClass().getClassLoader());
+		//SpringContextHolder.getContext().close();
 
 		functionContext.getResultSender().lastResult(SpringContextHolder.getContext().getBean("Sub"));
 	}

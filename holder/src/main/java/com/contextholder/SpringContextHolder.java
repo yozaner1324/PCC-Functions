@@ -8,22 +8,23 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SpringContextHolder {
 
-	private static AnnotationConfigApplicationContext context;
+	private static AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SpringContextHolder.class) {
+		@Override
+		public ClassLoader getClassLoader() {
+			return SpringContextHolder.class.getClassLoader();
+		}
+	};
 
 	public static synchronized AnnotationConfigApplicationContext getContext() {
-		if(context == null) {
-			context = new AnnotationConfigApplicationContext(SpringContextHolder.class) {
-				@Override
-				public ClassLoader getClassLoader() {
-					return SpringContextHolder.class.getClassLoader();
-				}
-			};
-		}
-
 		return context;
 	}
 
 	public synchronized static void refreshContext() {
-		context.refresh();
+		context = new AnnotationConfigApplicationContext(SpringContextHolder.class) {
+			@Override
+			public ClassLoader getClassLoader() {
+				return SpringContextHolder.class.getClassLoader();
+			}
+		};
 	}
 }
