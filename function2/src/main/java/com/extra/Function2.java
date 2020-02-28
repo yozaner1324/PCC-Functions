@@ -6,19 +6,16 @@ import org.apache.geode.cache.execute.FunctionContext;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ExtraFunction implements Function {
+public class Function2 implements Function {
 	@Override
 	public void execute(FunctionContext functionContext) {
-		//functionContext.getResultSender().lastResult(SpringContextHolder.getContext());
-//		functionContext.getResultSender().sendResult(SpringContextHolder.getContext().getClass().getClassLoader());
-		//SpringContextHolder.getContext().close();
 
 		functionContext.getResultSender().lastResult(SpringContextHolder.getContext().getBean("Sub"));
 	}
 
 	@Override
 	public String getId() {
-		return "extra";
+		return "fun2";
 	}
 
 	@Override
