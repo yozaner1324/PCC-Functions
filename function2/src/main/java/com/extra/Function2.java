@@ -1,35 +1,25 @@
 package com.extra;
 
-import com.contextholder.SpringContextHolder;
 import org.apache.geode.cache.execute.Function;
 import org.apache.geode.cache.execute.FunctionContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.gemfire.support.LazyWiringDeclarableSupport;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Function2 implements Function {
+public class Function2 extends LazyWiringDeclarableSupport implements Function {
+
+	//@Autowired
+	public Long subtract;
+
 	@Override
 	public void execute(FunctionContext functionContext) {
 
-		functionContext.getResultSender().lastResult(SpringContextHolder.getContext().getBean("Sub"));
+		functionContext.getResultSender().lastResult(subtract);
 	}
 
 	@Override
 	public String getId() {
 		return "fun2";
-	}
-
-	@Override
-	public boolean hasResult() {
-		return true;
-	}
-
-	@Override
-	public boolean isHA() {
-		return true;
-	}
-
-	@Override
-	public boolean optimizeForWrite() {
-		return true;
 	}
 }

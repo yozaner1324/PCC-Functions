@@ -1,44 +1,49 @@
 package com.function;
 
-import com.contextholder.SpringContextHolder;
 import org.apache.geode.cache.execute.Function;
 import org.apache.geode.cache.execute.FunctionContext;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.data.gemfire.support.LazyWiringDeclarableSupport;
+import org.springframework.data.gemfire.support.SpringContextBootstrappingInitializer;
 
-@Component
-public class Function1 implements Function {
+import java.util.Properties;
 
-	public Long subtract;
+@Configuration
+//@EnableBeanFactoryLocator
+@ComponentScan("com.extra")
+public class Function1 extends LazyWiringDeclarableSupport implements Function {
 
 	@Override
 	public void execute(FunctionContext functionContext) {
 
-		ApplicationContext c = SpringContextHolder.getContext();
+		//ApplicationContext c = SpringContextHolder.getContext();
 
-		subtract = (Long) c.getBean("Sub");
+//		ApplicationContext context = new AnnotationConfigApplicationContext(Function1.class) {
+//			@Override
+//			public ClassLoader getClassLoader() {
+//				return Function1.class.getClassLoader();
+//			}
+//		};
+
+		Properties properties = new Properties();
+		properties.setProperty("basePackages", "com.function");
+		//properties.setProperty("contextConfigLocations", "");
+
+		SpringContextBootstrappingInitializer init = new SpringContextBootstrappingInitializer();
+		SpringContextBootstrappingInitializer.register(Function1.class);
+		SpringContextBootstrappingInitializer.setBeanClassLoader(Function1.class.getClassLoader());
+		init.init(properties);
+		Long subtract = (Long) SpringContextBootstrappingInitializer.getApplicationContext().getBean("Sub");
+
+		//subtract = (Long) context.getBean("Sub");
 
 		functionContext.getResultSender().lastResult(subtract);
 	}
 
 	public String getId() {
 		return "fun1";
-	}
-
-	@Override
-	public boolean hasResult() {
-		return true;
-	}
-
-	@Override
-	public boolean isHA() {
-		return true;
-	}
-
-	@Override
-	public boolean optimizeForWrite() {
-		return true;
 	}
 
 	@Bean("Sub")
