@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class Function2 extends LazyWiringDeclarableSupport implements Function {
 
-	//@Autowired
+	@Autowired
 	public Long subtract;
 
 	@Override
@@ -22,4 +22,9 @@ public class Function2 extends LazyWiringDeclarableSupport implements Function {
 	public String getId() {
 		return "fun2";
 	}
+
+//	@Bean("Sub")
+//	public Long getSubtract() {
+//		return 28L;
+//	}
 }

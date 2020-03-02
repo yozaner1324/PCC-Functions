@@ -4,7 +4,6 @@ import org.apache.geode.cache.execute.Function;
 import org.apache.geode.cache.execute.FunctionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.gemfire.support.LazyWiringDeclarableSupport;
 import org.springframework.data.gemfire.support.SpringContextBootstrappingInitializer;
@@ -13,7 +12,7 @@ import java.util.Properties;
 
 @Configuration
 //@EnableBeanFactoryLocator
-@ComponentScan("com.extra")
+//@ComponentScan("com.extra")
 public class Function1 extends LazyWiringDeclarableSupport implements Function {
 
 	@Autowired
@@ -31,14 +30,13 @@ public class Function1 extends LazyWiringDeclarableSupport implements Function {
 //			}
 //		};
 
-		Properties properties = new Properties();
-		properties.setProperty("basePackages", "com.function");
+		//properties.setProperty("basePackages", "com.function");
 		//properties.setProperty("contextConfigLocations", "");
 
 		SpringContextBootstrappingInitializer init = new SpringContextBootstrappingInitializer();
 		SpringContextBootstrappingInitializer.register(Function1.class);
 		SpringContextBootstrappingInitializer.setBeanClassLoader(Function1.class.getClassLoader());
-		init.init(properties);
+		new SpringContextBootstrappingInitializer().init(new Properties());
 		//Long subtract = (Long) SpringContextBootstrappingInitializer.getApplicationContext().getBean("Sub");
 
 		//subtract = (Long) context.getBean("Sub");
@@ -52,6 +50,6 @@ public class Function1 extends LazyWiringDeclarableSupport implements Function {
 
 	@Bean("Sub")
 	public Long getSubtract() {
-		return 23L;
+		return 28L;
 	}
 }
