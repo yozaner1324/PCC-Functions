@@ -5,6 +5,10 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
+/********************************************************************************
+ NOTE: This class is not necessary if using SpringContextBootstrappingInitializer
+********************************************************************************/
+
 @Configuration // Uncomment for Spring without Boot
 @ComponentScan(basePackages = "com.fun*")	// Uncomment for Spring without Boot
 //@SpringBootApplication(scanBasePackages = "com.fun*") //Uncomment for Spring Boot

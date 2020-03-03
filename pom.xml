@@ -31,6 +31,12 @@
             <artifactId>geode-core</artifactId>
             <version>9.9.0</version>
         </dependency>
+        <!--Uncomment below if using Spring Boot -->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter</artifactId>-->
+<!--            <version>1.5.20.RELEASE</version>-->
+<!--        </dependency>-->
     </dependencies>
 
     <repositories>

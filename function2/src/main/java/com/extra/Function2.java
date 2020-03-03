@@ -10,21 +10,16 @@ import org.springframework.stereotype.Component;
 public class Function2 extends LazyWiringDeclarableSupport implements Function {
 
 	@Autowired
-	public Long subtract;
+	public Long number;
 
 	@Override
 	public void execute(FunctionContext functionContext) {
 
-		functionContext.getResultSender().lastResult(subtract);
+		functionContext.getResultSender().lastResult(number);
 	}
 
 	@Override
 	public String getId() {
 		return "fun2";
 	}
-
-//	@Bean("Sub")
-//	public Long getSubtract() {
-//		return 28L;
-//	}
 }
