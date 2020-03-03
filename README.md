@@ -7,16 +7,16 @@ reflect how this process may change in future releases of PCC or Spring.
 
 Using Spring in a server-side function in PCC is possible, but certain aspects may seem unintuitive and there are limitations. 
 
-One source of issues is that dependencies on PCCs classpath will be visible to your code. PCC itself uses Spring on the
+One source of issues is that dependencies on PCC's classpath will be visible to your code. PCC itself uses Spring on the
 server, so if your function uses a different version of Spring than PCC has on its classpath, there may be conflicts.
 You may have conflicts involving more than just Spring; logging implementations or any other dependencies you use may
-conflict with those provided by PCC. To solve this issue, you should develop against the same version of Spring PCC uses
-and do not bundle your Spring dependencies in your jar; this will cause your application to pick up and use the Spring
-version already on PCCs classpath. `In general, it is easier to bundle as few dependencies as possible; you should only
-bundle dependencies that are not already on the PCC classpath.` You can see what is on the classpath using the gfsh
-command `status server –name=XYZ` where XYZ is replaced with your server's name.
+conflict with those provided by PCC. To solve this issue, you should develop against the same version of Spring that PCC
+uses and do not bundle your Spring dependencies in your jar; this will allow your application to pick up and use the
+Spring version already on PCC's classpath. `In general, it is easier to bundle as few dependencies as possible; you
+should onlybundle dependencies that are not already on the PCC classpath.` You can see what is on the classpath using
+the gfsh command `status server --name=XYZ` where XYZ is replaced with your server's name.
 
-### Recommended Way to Start Spring ApplicationContext
+### Recommended Way to Start a Spring ApplicationContext
 
 This is the simplest way to create a Spring ApplicationContext and inject beans on a PCC server. It will allow you to
 use Autowiring and maintain a single ApplicationContext across multiple calls that can be shared between functions.
@@ -34,10 +34,10 @@ accomplished with the below code:
         new SpringContextBootstrappingInitializer().init(new Properties()); 
       ```
 4.	Build your jar bundling spring-data-gemfire inside. Unfortunately, the version of Spring Data GemFire that is based
-off of the correct Spring version is incompatible with the current version of PCC and, as such, using it will yield the
-following exception: `java.lang.NoClassDefFoundError: com/gemstone/gemfire/cache/Declarable`. To resolve this, you will
-need to use a newer version of Spring Data GemFire; at the time of writing this, using Spring Data GemFire 2.0.0.RELEASE
-works. This may change in future releases of PCC.
+off of the correct Spring version for PCC is incompatible with the current version of PCC itself and, as such, using it
+will yield the following exception: `java.lang.NoClassDefFoundError: com/gemstone/gemfire/cache/Declarable`. To resolve
+this, you will need to use a newer version of Spring Data GemFire; at the time of writing this, using Spring Data
+GemFire 2.0.0.RELEASE works. This may change in future releases of PCC.
 5.	You may now access the Spring `ApplicationContext` with `SpringContextBootstrappingInitializer.getApplicationContext()`
 and beans should be created and injected as expected.
 6.	Note that multiple calls to the function initializing the ApplicationContext will result in an exception:
@@ -47,19 +47,18 @@ to have a separate function specifically for initializing the `ApplicationContex
 ### Other Ways to Use Spring
 
 The above method is the most convenient and least limited way to use Spring on a PCC server, however, there are other
-ways. The below sections are here for the sake of completeness and can be used if for some reason the above method does
-not meet your use case. Not using the recommended method has at least one major drawback; Autowiring is not supported. 
+ways. The below sections are effectively made obsolete by the above method but may still be of use in some cases. Not
+using the recommended method has at least one major drawback; Autowiring is not supported. 
 
 #### Using a Spring Utility
 
 The simplest Spring use case is to use some utility class from Spring that does not require an `ApplicationContext`.
-This can be done easily as long as the utility you want is part of a dependency on PCCs classpath. All you have to do is
-use the utility as you normally would, and when building your jar, do not embed your dependencies if they are already on
-the classpath of the PCC server. If the utility you want to use comes from a Spring library not present on PCC, such as
-SpringUtils from the Spring Data GemFire project, you may still use it, but you will need to pack the necessary dependency
-into your jar.
+This can be done easily as long as the utility you want is part of a dependency on PCC's classpath. All you have to do is
+use the utility as you normally would, and when building your jar, do not embed dependencies already on the classpath of
+the PCC server. If the utility you want to use comes from a Spring library not present on PCC, such as SpringUtils from
+the Spring Data GemFire project, you may still use it, but you will need to pack the necessary dependency into your jar.
 
-#### Starting an ApplicationContext
+#### Starting a Spring ApplicationContext
 
 A more interesting use case is to create an `ApplicationContext` and define beans. To do this, annotate your function
 class (or whatever class you want to act as your configuration) with `@Configuration` and create your context in the
@@ -86,14 +85,15 @@ described earlier in this document.
 You may wish to use Spring Boot, which is possible. First, you will have to use a version of Spring Boot that is
 compatible with the version of Spring on PCC. Annotate your function class (or whatever class you want to hold your
 configuration) with `@SpringBootApplication`, then create your context using `SpringApplication` or
-`SpringApplicationBuilder` and passing in your configuration class, and now you have an `ApplicationContext` without
+`SpringApplicationBuilder` and passing in your configuration class; now you have an `ApplicationContext` without
 having to mess with ClassLoaders. Because PCC does not have Spring Boot on the classpath, you will have to pack it into
 your jar. You may get an error like “No auto configuration classes found in META-INF/spring.factories. If you are using
-a custom packaging, make sure that file is correct.”, the solution to which is counter-intuitive; remove spring-boot-autoconfigure
-from your jar. As mentioned before, make sure to use a version of Spring Boot that uses the same Spring Framework
-version as PCC has on its classpath and only bundle the dependencies that you need that PCC doesn’t already have on
-its classpath, as redefining a dependency with a different versions than PCC uses may cause conflicts. You can see what
-is on the classpath using the gfsh command `status server –name=XYZ` where XYZ is replaced with your server's name.
+a custom packaging, make sure that file is correct”. The solution may seem counter-intuitive; remove
+spring-boot-autoconfigure from your jar. As mentioned before, make sure to use a version of Spring Boot that uses the
+same Spring Framework version as PCC has on its classpath, and only bundle the dependencies that you need that PCC
+doesn’t already have on its classpath, as redefining a dependency with a different version than PCC uses may cause
+conflicts. You can see what is on the classpath using the gfsh command `status server --name=XYZ` where XYZ is replaced
+with your server's name.
 
 #### Persisting an ApplicationContext Across Function Calls and Sharing it Between Functions
 
@@ -111,7 +111,7 @@ As such, it is recommended to keep all server-side code that needs to access the
 ### Limitations
 
 *	You must use the same version of Spring as PCC has on the classpath. You can see what is on the classpath using the
-gfsh command `status server –name=XYZ` where XYZ is replaced with your server's name.
+gfsh command `status server --name=XYZ` where XYZ is replaced with your server's name.
 *	Multiple jars cannot properly share a single `ApplicationContext`.
 *	Autowiring only works when using the recommended method.
 
@@ -121,7 +121,7 @@ This example code consists of three modules: function1, function2, and holder.
 
 * function1 uses `SpringContetBootstrappingInitializer` to create and persist an `ApplicationContext`. 
 * function2 uses a bean declared in the configuration class used by function1 to create the `ApplicationContext`.
-* holder is only relevant if using one of teh non-recommended methods. It will create and store an `ApplicatioContext`.
+* holder is only relevant if using one of the non-recommended methods. It will create and store an `ApplicatioContext`.
 
 holder has code for using Spring with and without Spring Boot; currently, the Spring Boot code is commented out. The
 Spring Boot dependency is also commented out in the pom.xml.
