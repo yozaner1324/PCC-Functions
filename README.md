@@ -21,9 +21,10 @@ the gfsh command `status server --name=XYZ` where XYZ is replaced with your serv
 This is the simplest way to create a Spring ApplicationContext and inject beans on a PCC server. It will allow you to
 use Autowiring and maintain a single ApplicationContext across multiple calls that can be shared between functions.
 However, the ApplicationContext cannot be shared between jars.
-1.	Ensure that all classes that define beans, including your function class, extend `LazyWiringDeclarableSupport` from
-Spring Data GemFire. Not extending this class will result in your beans not being registered with the ApplicationContext. 
-2.	Annotate your configuration class with `@Configuration`. This can be your function class or any other.
+1.	1.	Ensure that your function class implements org.apache.geode.cache.execute.Function and that all classes that
+define beans, including your function class, extend LazyWiringDeclarableSupport from Spring Data GemFire. Not extending
+this class will result in your beans not being registered with the ApplicationContext. 
+2.	Annotate your configuration class as you want it. This can be your function class or any other.
 3.	Inside your function’s `execute()` method, register your configuration class with
 `SpringContextBootstrappingInitializer`, set the bean ClassLoader to the same ClassLoader as your configuration class,
 and called init() on a new instance of SpringContextBootstrappingInitializer with a new `Properties` object. This can be
@@ -117,12 +118,11 @@ gfsh command `status server --name=XYZ` where XYZ is replaced with your server's
 
 ### Example Code
 
-This example code consists of three modules: function1, function2, and holder.
+This example project consists of three modules: function1, function2, and holder.
 
-* function1 uses `SpringContetBootstrappingInitializer` to create and persist an `ApplicationContext`. 
-* function2 uses a bean declared in the configuration class used by function1 to create the `ApplicationContext`.
+* function1 uses `SpringContextBootstrappingInitializer` to create and persist an `ApplicationContext`. 
+* function2 uses a bean declared in the configuration class.
 * holder is only relevant if using one of the non-recommended methods. It will create and store an `ApplicatioContext`.
-
 holder has code for using Spring with and without Spring Boot; currently, the Spring Boot code is commented out. The
 Spring Boot dependency is also commented out in the pom.xml.
  
