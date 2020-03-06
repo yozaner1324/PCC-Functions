@@ -6,8 +6,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SpringConfig {
 
-	@Bean("Num")
-	public Long getSubtract() {
-		return 28L;
+	@Bean("Greeting")
+	public String createGreeting() {
+		return "Salutations";
+	}
+
+	@Bean("Addressee")
+	public String createAddressee() {
+		return "Earth";
 	}
 }
