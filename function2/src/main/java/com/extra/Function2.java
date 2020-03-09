@@ -22,7 +22,12 @@ public class Function2 extends LazyWiringDeclarableSupport implements Function {
 	@Override
 	public void execute(FunctionContext functionContext) {
 
-		functionContext.getResultSender().lastResult(greeting + ", " + addressee + "!");
+		Long sum = 0L;
+		for(Object i: functionContext.getCache().getRegion("/Numbers").values()) {
+			sum += (Long) i;
+		}
+
+		functionContext.getResultSender().lastResult(greeting + ", " + addressee + "! The sum of all values in /Numbers is " + sum);
 	}
 
 	@Override
